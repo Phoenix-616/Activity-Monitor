@@ -14,5 +14,5 @@ namespace ActivityMonitor.Database.Models
         public string Created_on { get; set; }
         public string Updated_on { get; set; }
         public string Is_public { get; set; }
-}
+    }
 }

@@ -22,36 +22,10 @@ namespace ActivityMonitor.PMT
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
         }
 
-        public abstract Task<string[]> GetProjects();
-        public abstract Task<string[]> GetProjectUsers(string project);
-        public abstract Task<string[]> GetTaskList(string project);
-        public abstract Task<string[]> GetTaskHistory(string task);
-    }
-
-    internal class A : APMT
-    {
-        public A(string login, string password, Uri pmtUri) : base(login, password, pmtUri)
-        {
-        }
-
-        public override Task<string[]> GetProjects()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override async Task<string[]> GetProjectUsers(string project)
-        {
-            throw new NotImplementedException();
-        }
-        public override Task<string[]> GetTaskList(string project)
-        {
-            throw new NotImplementedException();
-        }
-        public override Task<string[]> GetTaskHistory(string task)
-        {
-            throw new NotImplementedException();
-        }
-
+        public abstract Task<Project[]> GetProjects();
+        public abstract Task<Membership[]> GetProjectUsers(int id);
+        public abstract Task<Issue[]> GetTaskList(int id);
+        public abstract Task<IssueHistory[]> GetTaskHistory(int id);
     }
 }
 

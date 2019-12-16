@@ -2,6 +2,7 @@
 using System.Runtime.Serialization;
 using System.IO;
 using System.Runtime.Serialization.Json;
+using System.Threading.Tasks;
 
 namespace ActivityMonitor.GitHubInteraction
 {
@@ -36,6 +37,23 @@ namespace ActivityMonitor.GitHubInteraction
         private Stream GetStream()
         {
             return File.OpenRead("gitAuth.json");
+        }
+
+        public async Task<double> GetChurn(string ownerOfRepo, string nameOfRepo, string contributer)
+        {
+            int added = 0;
+            int deleted = 0;
+            var contibuters = await client.Repository.Statistics.GetContributors(ownerOfRepo, nameOfRepo);
+            foreach (var cont in contibuters)
+            {
+                if(contributer.Equals(cont.Author.Login))
+                foreach (var commitsByWeek in cont.Weeks)
+                {
+                    added += commitsByWeek.Additions;
+                    deleted += commitsByWeek.Deletions;   
+                }
+            }
+            return (deleted * 1.0) / added;
         }
     }
 }

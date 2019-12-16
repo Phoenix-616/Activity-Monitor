@@ -59,6 +59,12 @@ namespace ActivityMonitor.GitHubInteraction
             return total;
         }
 
+        public async Task<IReadOnlyList<GitHubCommit>> GetAllCommits(string ownerOfRepo, string nameOfRepo)
+        {
+            var commits = await client.Repository.Commit.GetAll(ownerOfRepo, nameOfRepo);
+            return commits;
+        }
+
         public async Task<IReadOnlyList<Contributor>> GetContributers(string ownerOfRepo, string nameOfRepo)
         {
             var contibuters = await client.Repository.Statistics.GetContributors(ownerOfRepo, nameOfRepo);

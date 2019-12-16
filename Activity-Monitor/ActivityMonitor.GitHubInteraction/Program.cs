@@ -18,8 +18,17 @@ namespace ActivityMonitor.GitHubInteraction
         public static async Task Main()
         {
             var getter = new GitHubDataGetter();
+            
+            Console.Write(await getter.GetChurn("Phoenix-616", "Activity-Monitor", "momikenSneg"));
+            Console.WriteLine();
+            Console.Write(await getter.GetCodeSize("Phoenix-616", "Activity-Monitor", "Phoenix-616"));
 
-            Console.Write(await getter.GetChurn("ogresed", "CardGame", "ogresed"));
+            var part = await getter.client.Repository.Statistics.GetParticipation("ogresed", "CardGame");
+
+
+
+            var commAct = await getter.client.Repository.Statistics.GetCommitActivity("ogresed", "CardGame");
+            var punch = await getter.client.Repository.Statistics.GetPunchCard("ogresed", "CardGame");
         }
     }
 }

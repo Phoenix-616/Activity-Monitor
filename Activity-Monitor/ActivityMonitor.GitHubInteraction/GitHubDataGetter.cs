@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
+using System;
 
 namespace ActivityMonitor.GitHubInteraction
 {
@@ -39,6 +40,24 @@ namespace ActivityMonitor.GitHubInteraction
             return File.OpenRead("gitAuth.json");
         }
 
+        public async Task<int> GetCodeSize(string ownerOfRepo, string nameOfRepo, string contributer)
+        {
+            int total = 0;
+            var contibuters = await client.Repository.Statistics.GetContributors(ownerOfRepo, nameOfRepo);
+            foreach (var cont in contibuters)
+            {
+                if (contributer.Equals(cont.Author.Login))
+                {
+                    foreach (var commitsByWeek in cont.Weeks)
+                    {
+                        total += commitsByWeek.Additions;
+                        total -= commitsByWeek.Deletions;
+                    }
+                }
+            }
+            return total;
+        }
+
         public async Task<double> GetChurn(string ownerOfRepo, string nameOfRepo, string contributer)
         {
             int added = 0;
@@ -46,11 +65,13 @@ namespace ActivityMonitor.GitHubInteraction
             var contibuters = await client.Repository.Statistics.GetContributors(ownerOfRepo, nameOfRepo);
             foreach (var cont in contibuters)
             {
-                if(contributer.Equals(cont.Author.Login))
-                foreach (var commitsByWeek in cont.Weeks)
+                if (contributer.Equals(cont.Author.Login))
                 {
-                    added += commitsByWeek.Additions;
-                    deleted += commitsByWeek.Deletions;   
+                    foreach (var commitsByWeek in cont.Weeks)
+                    {
+                        added += commitsByWeek.Additions;
+                        deleted += commitsByWeek.Deletions;
+                    }
                 }
             }
             return (deleted * 1.0) / added;

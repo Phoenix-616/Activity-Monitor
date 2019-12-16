@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.329
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29519.87
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ActivityMonitor", "ActivityMonitor\ActivityMonitor.csproj", "{FA01EC33-4204-4634-B744-FD3C1465883E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ActivityMonitor.Database", "ActivityMonitor.Database\ActivityMonitor.Database.csproj", "{D38B4979-A120-42A7-94D0-11530891426E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActivityMonitor.GitHubInteraction", "ActivityMonitor.GitHubInteraction\ActivityMonitor.GitHubInteraction.csproj", "{0EDBD0DB-70C0-478E-B748-F7A9FCCE84A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ActivityMonitor.GitHubInteraction", "ActivityMonitor.GitHubInteraction\ActivityMonitor.GitHubInteraction.csproj", "{0EDBD0DB-70C0-478E-B748-F7A9FCCE84A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

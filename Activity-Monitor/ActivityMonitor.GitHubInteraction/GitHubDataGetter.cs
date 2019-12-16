@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 using System;
+using System.Collections.Generic;
 
 namespace ActivityMonitor.GitHubInteraction
 {
@@ -56,6 +57,12 @@ namespace ActivityMonitor.GitHubInteraction
                 }
             }
             return total;
+        }
+
+        public async Task<IReadOnlyList<Contributor>> GetContributers(string ownerOfRepo, string nameOfRepo)
+        {
+            var contibuters = await client.Repository.Statistics.GetContributors(ownerOfRepo, nameOfRepo);
+            return contibuters;
         }
 
         public async Task<double> GetChurn(string ownerOfRepo, string nameOfRepo, string contributer)

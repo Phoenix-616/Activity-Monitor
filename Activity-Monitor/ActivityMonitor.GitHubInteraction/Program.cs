@@ -22,13 +22,21 @@ namespace ActivityMonitor.GitHubInteraction
             Console.Write(await getter.GetChurn("Phoenix-616", "Activity-Monitor", "momikenSneg"));
             Console.WriteLine();
             Console.Write(await getter.GetCodeSize("Phoenix-616", "Activity-Monitor", "Phoenix-616"));
+            Console.WriteLine();
 
-            var part = await getter.client.Repository.Statistics.GetParticipation("ogresed", "CardGame");
+            var contr = await getter.GetContributers("Phoenix-616", "Activity-Monitor");
+            foreach(var c in contr)
+            {
+                Console.WriteLine(c.Author.Login);
+
+            }
 
 
 
-            var commAct = await getter.client.Repository.Statistics.GetCommitActivity("ogresed", "CardGame");
             var punch = await getter.client.Repository.Statistics.GetPunchCard("ogresed", "CardGame");
+            var part = await getter.client.Repository.Statistics.GetParticipation("ogresed", "CardGame");
+            
+            var commAct = await getter.client.Repository.Statistics.GetCommitActivity("ogresed", "CardGame");
         }
     }
 }

@@ -1,12 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ActivityMonitor.Database\ActivityMonitor.Database.csproj" />
-    <ProjectReference Include="..\ActivityMonitor\ActivityMonitor.csproj" />
-  </ItemGroup>
 
 </Project>

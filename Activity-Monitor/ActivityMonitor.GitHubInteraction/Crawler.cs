@@ -1,8 +1,6 @@
 ﻿using Octokit;
-using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
+
 
 namespace ActivityMonitor.GitHubInteraction
 {
@@ -22,7 +20,7 @@ namespace ActivityMonitor.GitHubInteraction
         {
             foreach (var repo in repositories)
             {
-                //var r = await client.Repository.Commit.GetAll();
+                
             }
         }
     }

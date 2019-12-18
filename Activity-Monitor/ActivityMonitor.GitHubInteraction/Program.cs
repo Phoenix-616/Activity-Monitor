@@ -1,18 +1,56 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 
 namespace ActivityMonitor.GitHubInteraction
 {
     class Program
     {
+        public readonly string GitAuthPath = "gitAuth.json";             
+        public static void InitJson()
+        {
+            var am = new Repository
+            {
+                owner = "Phoenix-616",
+                name = "Activity-Monitor"
+            };
+            var cg = new Repository
+            {
+                owner = "ogresed",
+                name = "CardGame"
+            };
+            Repository[] repositorys = new Repository[2];
+            repositorys[0] = am;
+            repositorys[1] = cg;
+            var a = new AuthGitInfo
+            {
+                login = "ogresed",
+                password = "enterPasswod",
+                repositories = repositorys
+            };
+
+            var stream1 = File.OpenWrite("gitAuth.json");
+            var ser = new DataContractJsonSerializer(typeof(AuthGitInfo));
+            ser.WriteObject(stream1, a);
+        }
         public static async Task Main()
         {
-            var getter = new GitHubDataGetter();
+            AuthGitInfo info;
+            using (Stream fs = GetStream())
+            {
+                var ser = new DataContractJsonSerializer(typeof(AuthGitInfo));
+                fs.Position = 0;
+                info = (AuthGitInfo)ser.ReadObject(fs);
+            }
+            var crawler = new Crawler(info.login, info.password);
+            await crawler.Gathering(info.repositories);
+        }
 
-            var d = await getter.GetAgeOfProject("Phoenix-616", "Activity-Monitor");
-            Console.WriteLine($"{d}");
-            Console.WriteLine();
+        private static Stream GetStream()
+        {
+            return File.OpenRead("gitAuth.json");
         }
     }
 }

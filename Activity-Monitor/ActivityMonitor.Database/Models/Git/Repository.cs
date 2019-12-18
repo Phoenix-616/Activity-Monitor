@@ -1,14 +1,18 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace ActivityMonitor.Database.Models.Git
 {
-    class Repository
+    public class Repository
     {
-        public int id { get; set; }
-        public string owner { get; set; }
-        public string name { get; set; }
-        public ICollection<Developer> developers { get; set; }
+        public string OwnersLogin { get; set; }
+        public string Name { get; set; }
+        public ICollection<Developer> Developers { get; set; }
+
+        public ICollection<Commit> Commits { get; set; }
+        public ICollection<File> Files { get; set; }
     }
 }

@@ -4,12 +4,13 @@ using System.Text;
 
 namespace ActivityMonitor.Database.Models.Git
 {
-    class Developer
+    public class Developer
     {
-        public int id { get; set; }
-        public string login { get; set; }
-        public string firstName { get; set; }
-        public string lastName { get; set; }
-        public ICollection<Repository> repositories { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Login { get; set; }
+        public string Email { get; set; }
+        ICollection<Repository> Repositories { get; set; }
+        ICollection<Commit> Commits { get; set; }
     }
 }

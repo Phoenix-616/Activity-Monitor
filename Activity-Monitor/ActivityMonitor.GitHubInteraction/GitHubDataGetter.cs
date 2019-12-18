@@ -9,7 +9,6 @@ using System.Linq;
 
 namespace ActivityMonitor.GitHubInteraction
 {
-
     class GitHubDataGetter
     {
         public readonly string NameOfApp = "Activity-Monitor";
@@ -44,7 +43,7 @@ namespace ActivityMonitor.GitHubInteraction
         /// <summary>
         /// return age of the oldest file
         /// </summary>
-        public async Task<int> GetAgeOfProject (
+        public async Task<TimeSpan> GetAgeOfProject (
             string ownerOfRepo, string nameOfRepo)
         {
             var earlystDates = DateTimeOffset.MaxValue;
@@ -68,7 +67,7 @@ namespace ActivityMonitor.GitHubInteraction
                     earlystDates = latestDate;
                 }
             }
-            return (DateTime.Now - earlystDates.DateTime).Days;
+            return DateTime.Now - earlystDates.DateTime;
         }
 
         public async Task<int> GetActiveDays(string ownerOfRepo, string nameOfRepo, string contributor)

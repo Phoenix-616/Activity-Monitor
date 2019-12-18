@@ -41,10 +41,16 @@ namespace ActivityMonitor.GitHubInteraction
             return File.OpenRead("gitAuth.json");
         }
 
+        public async Task<DateTimeOffset> GetAgeOfProject(
+            string ownerOfRepo, string nameOfRepo, string contributor)
+        {
+
+        }
+
         public async Task<int> GetActiveDays(string ownerOfRepo, string nameOfRepo, string contributor)
         {
             var commits = await client.Repository.Commit.GetAll(ownerOfRepo, nameOfRepo);
-            var commitsOfContributor = getCommitsOfContributor(commits, contributor);
+            var commitsOfContributor = GetCommitsOfContributor(commits, contributor);
 
             int counter = 0;
 
@@ -57,9 +63,9 @@ namespace ActivityMonitor.GitHubInteraction
                 var commitDate = commit.Commit.Author.Date;
                 var commitYear = commitDate.Year;
                 var commitDayOfYear = commitDate.DayOfYear;
+
                 if (previouslyDayOfYear != commitDayOfYear || previouslyYear != commitYear)
                 {
-                    Console.WriteLine(commitDate);
                     counter++;
                     previouslyYear = commitDate.Year;
                     previouslyDayOfYear = commitDate.DayOfYear;
@@ -68,7 +74,7 @@ namespace ActivityMonitor.GitHubInteraction
             return counter;
         }
 
-        private List<GitHubCommit> getCommitsOfContributor(
+        private List<GitHubCommit> GetCommitsOfContributor(
             IReadOnlyList<GitHubCommit> commits,
             string contributor)
         {

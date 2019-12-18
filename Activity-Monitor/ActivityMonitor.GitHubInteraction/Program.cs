@@ -10,7 +10,7 @@ namespace ActivityMonitor.GitHubInteraction
         {
             var getter = new GitHubDataGetter();
             
-            Console.WriteLine(await getter.GetA("Phoenix-616", "Activity-Monitor", "ogresed"));
+            Console.WriteLine(await getter.GetActiveDays("Phoenix-616", "Activity-Monitor", "Phoenix-616"));
             Console.WriteLine();
         }
     }

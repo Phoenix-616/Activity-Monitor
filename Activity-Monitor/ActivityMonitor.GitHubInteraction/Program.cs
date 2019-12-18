@@ -10,7 +10,7 @@ namespace ActivityMonitor.GitHubInteraction
         {
             var getter = new GitHubDataGetter();
             
-            //Console.WriteLine(await getter.GetAll("Phoenix-616", "Activity-Monitor", "ogresed"));
+            Console.WriteLine(await getter.GetA("Phoenix-616", "Activity-Monitor", "ogresed"));
             Console.WriteLine();
         }
     }

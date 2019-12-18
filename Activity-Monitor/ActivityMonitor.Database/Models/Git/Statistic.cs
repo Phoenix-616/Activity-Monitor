@@ -6,13 +6,13 @@ namespace ActivityMonitor.Database.Models.Git
 {
     class Statistic
     {
-        public int id;
-        public Developer developer;
-        public Repository repository; 
-        public int activeDays;
-        public int codeSize;
-        public double churn;
-        public TimeSpan ageOfProject;
-        public double busNumber;
+        public int id { get; set; } 
+        public Developer developer { get; set; }
+        public Repository repository { get; set; }
+        public int activeDays { get; set; }
+        public int codeSize { get; set; }
+        public double churn { get; set; }
+        public TimeSpan ageOfProject { get; set; }
+        public double busNumber { get; set; }
     }
 }

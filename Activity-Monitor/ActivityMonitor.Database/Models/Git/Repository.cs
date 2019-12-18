@@ -6,9 +6,9 @@ namespace ActivityMonitor.Database.Models.Git
 {
     class Repository
     {
-        public int id;
-        public string owner;
-        public string name;
-        public ICollection<Developer> developers;
+        public int id { get; set; }
+        public string owner { get; set; }
+        public string name { get; set; }
+        public ICollection<Developer> developers { get; set; }
     }
 }

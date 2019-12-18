@@ -41,13 +41,30 @@ namespace ActivityMonitor.GitHubInteraction
             return File.OpenRead("gitAuth.json");
         }
 
-        public async Task<int> GetCodeSize(string ownerOfRepo, string nameOfRepo, string contributer)
+        
+
+        private List<GitHubCommit> getCommitsOfContributor(
+            IReadOnlyList<GitHubCommit> commits,
+            string contributor)
+        {
+            var list = new List<GitHubCommit>();
+            foreach(var commit in commits)
+            {
+                if(commit.Author != null && contributor.Equals(commit.Author.Login))
+                {
+                    list.Add(commit);
+                }
+            }
+            return list;
+        }
+
+        public async Task<int> GetCodeSize(string ownerOfRepo, string nameOfRepo, string contributor)
         {
             int total = 0;
             var contibuters = await client.Repository.Statistics.GetContributors(ownerOfRepo, nameOfRepo);
             foreach (var cont in contibuters)
             {
-                if (contributer.Equals(cont.Author.Login))
+                if (contributor.Equals(cont.Author.Login))
                 {
                     foreach (var commitsByWeek in cont.Weeks)
                     {
@@ -71,14 +88,14 @@ namespace ActivityMonitor.GitHubInteraction
             return contibuters;
         }
 
-        public async Task<double> GetChurn(string ownerOfRepo, string nameOfRepo, string contributer)
+        public async Task<double> GetChurn(string ownerOfRepo, string nameOfRepo, string contributor)
         {
             int added = 0;
             int deleted = 0;
             var contibuters = await client.Repository.Statistics.GetContributors(ownerOfRepo, nameOfRepo);
             foreach (var cont in contibuters)
             {
-                if (contributer.Equals(cont.Author.Login))
+                if (contributor.Equals(cont.Author.Login))
                 {
                     foreach (var commitsByWeek in cont.Weeks)
                     {

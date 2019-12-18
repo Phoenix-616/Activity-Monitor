@@ -40,6 +40,31 @@ namespace ActivityMonitor.GitHubInteraction
         {
             return File.OpenRead("gitAuth.json");
         }
+
+        public async Task<double> GetBusNumber (string ownerOfRepo, string nameOfRepo, string contributor)
+        {
+            var commits = await client.Repository.Commit.GetAll(ownerOfRepo, nameOfRepo);
+            var quarterList = getQuarterList(commits);
+
+            return 0.0;
+        }
+
+        private List<GitHubCommit> getQuarterList(IReadOnlyList<GitHubCommit> commits)
+        {
+            var list = new List<GitHubCommit>();
+            foreach(var commit in commits )
+            {
+                var date = commit.Commit.Author.Date;
+                var nowDate = DateTimeOffset.Now;
+                var quarter = new TimeSpan(90, 0, 0, 0, 0);
+                if (nowDate - date <= quarter)
+                {
+                    list.Add(commit);
+                }
+            }
+            return list;
+        }
+
         /// <summary>
         /// return age of the oldest file
         /// </summary>

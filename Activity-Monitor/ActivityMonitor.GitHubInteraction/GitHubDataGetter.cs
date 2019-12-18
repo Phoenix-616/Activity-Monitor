@@ -5,6 +5,7 @@ using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ActivityMonitor.GitHubInteraction
 {
@@ -13,7 +14,7 @@ namespace ActivityMonitor.GitHubInteraction
     {
         public readonly string NameOfApp = "Activity-Monitor";
         public readonly string GitAuthPath = "gitAuth.json";
-        public readonly GitHubClient client;
+        private readonly GitHubClient client;
         [DataContract]
         class AuthGitInfo
         {
@@ -40,11 +41,34 @@ namespace ActivityMonitor.GitHubInteraction
         {
             return File.OpenRead("gitAuth.json");
         }
-
-        public async Task<DateTimeOffset> GetAgeOfProject(
-            string ownerOfRepo, string nameOfRepo, string contributor)
+        /// <summary>
+        /// return age of the oldest file
+        /// </summary>
+        public async Task<int> GetAgeOfProject (
+            string ownerOfRepo, string nameOfRepo)
         {
-
+            var earlystDates = DateTimeOffset.MaxValue;
+            var files = await client.Git.Tree.GetRecursive(ownerOfRepo, nameOfRepo, "master");
+            var filePaths = files.Tree.Select(x => x.Path);
+            foreach (var path in filePaths)
+            {
+                var request = new CommitRequest { Path = path };
+                var commitsForFile = await client.Repository.Commit.GetAll(ownerOfRepo, nameOfRepo, request);
+                var latestDate = new DateTimeOffset();
+                foreach(var commit in commitsForFile)
+                {
+                    var commitDate = commit.Commit.Author.Date;
+                    if (DateTimeOffset.Compare(latestDate, commitDate) < 0)
+                    {
+                        latestDate = commitDate;
+                    }
+                }
+                if(DateTimeOffset.Compare(latestDate, earlystDates) < 0 )
+                {
+                    earlystDates = latestDate;
+                }
+            }
+            return (DateTime.Now - earlystDates.DateTime).Days;
         }
 
         public async Task<int> GetActiveDays(string ownerOfRepo, string nameOfRepo, string contributor)

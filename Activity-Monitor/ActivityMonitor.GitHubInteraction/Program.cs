@@ -9,8 +9,9 @@ namespace ActivityMonitor.GitHubInteraction
         public static async Task Main()
         {
             var getter = new GitHubDataGetter();
-            
-            Console.WriteLine(await getter.GetActiveDays("Phoenix-616", "Activity-Monitor", "Phoenix-616"));
+
+            var d = await getter.GetAgeOfProject("Phoenix-616", "Activity-Monitor");
+            Console.WriteLine($"{d}");
             Console.WriteLine();
         }
     }

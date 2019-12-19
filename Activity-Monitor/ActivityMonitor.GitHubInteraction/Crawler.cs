@@ -30,7 +30,7 @@ namespace ActivityMonitor.GitHubInteraction
 
         public class Data
         {
-            public int commitSha { get; set; }
+            public string commitSha { get; set; }
             public string commitAuthorName { get; set; }
             public string commitAuthorEmail { get; set; }
             public DateTimeOffset createdAt { get; set; }
@@ -50,25 +50,7 @@ namespace ActivityMonitor.GitHubInteraction
                 foreach(var commit in commits)
                 {
                     var data = GetData(commit, owner, name);
-                    var gitId = commit.Commit.Sha;
-                    var authorName = commit.Commit.Author.Name;
-                    var authorEmail = commit.Commit.Author.Email;
-                    var createdAt = commit.Commit.Author.Date;
-                    var repositoryName = owner + "/" + name;
-                    var filesName = commit.Files.Select(x => x.Filename);
-                    int additions = 0;
-                    int deletions = 0;
-
-                    var additionsArrayByCommit = commit.Files.Select(x => x.Additions);
-                    var deletionsArrayByCommit = commit.Files.Select(x => x.Deletions);
-                    foreach (var a in additionsArrayByCommit)
-                    {
-                        additions += a;
-                    }
-                    foreach (var d in deletionsArrayByCommit)
-                    {
-                        deletions += d;
-                    }
+                    
 
 
                 }
@@ -79,8 +61,31 @@ namespace ActivityMonitor.GitHubInteraction
         {
             var data = new Data
             {
+                commitSha = commit.Commit.Sha,
+                commitAuthorName = commit.Commit.Author.Name,
+                commitAuthorEmail = commit.Commit.Author.Email,
+                createdAt = commit.Commit.Author.Date,
+                repositoryName = owner + "/" + name,
+                filesNames = commit.Files.Select(x => x.Filename)
+            };
 
+            int additions = 0;
+            int deletions = 0;
+
+            var additionsArrayByCommit = commit.Files.Select(x => x.Additions);
+            var deletionsArrayByCommit = commit.Files.Select(x => x.Deletions);
+            foreach (var a in additionsArrayByCommit)
+            {
+                additions += a;
             }
+            foreach (var d in deletionsArrayByCommit)
+            {
+                deletions += d;
+            }
+
+            data.additions = additions;
+            data.deletions = deletions;
+            return data;
         }
     }
 }

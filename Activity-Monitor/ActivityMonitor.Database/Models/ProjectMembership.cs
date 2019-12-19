@@ -6,7 +6,7 @@ using System.Text;
 
 namespace ActivityMonitor.Database.Models
 {
-    class ProjectMembership
+    public class ProjectMembership
     {
         public int ProjectId { get; set; }
         public Project Project { get; set; }

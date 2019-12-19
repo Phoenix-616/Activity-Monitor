@@ -6,7 +6,7 @@ using System.Text;
 
 namespace ActivityMonitor.Database.Models
 {
-    class Journal
+    public class Journal
     {
         public int Id { get; set; }
         public int AuthorId { get; set; }

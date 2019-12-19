@@ -6,7 +6,7 @@ using System.Text;
 
 namespace ActivityMonitor.Database.Models
 {
-    class Issue
+    public class Issue
     {
         public int Id { get; set; }
         public string TrackerName { get; set; }

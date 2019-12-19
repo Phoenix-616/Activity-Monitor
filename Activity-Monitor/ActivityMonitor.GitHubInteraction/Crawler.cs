@@ -1,8 +1,6 @@
 ﻿using Octokit;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using ActivityMonitor.Database.Models;
-using ActivityMonitor.Database.Models.Git.ActivityMonitor.Database.Models;
 using System.Linq;
 using System;
 
@@ -91,13 +89,38 @@ namespace ActivityMonitor.GitHubInteraction
 
         private void createRepository(Data data, Models models)
         {
-            //if(!models.repositories.Select(x=>x.))
-            throw new NotImplementedException();
+            var reposNames = models.repositories.Select(x => x.Name);
+            if(!reposNames.Contains(data.repositoryName))
+            {
+                var repo = new Database.Models.Repository
+                {
+                    Name = data.repositoryName
+                };
+            }
+            else//add this repo to other models
+            {
+                //files
+                //developerRepository
+                //commit
+            }
         }
 
         private void createDeveloper(Data data, Models models)
         {
-            throw new NotImplementedException();
+            var devNames = models.repositories.Select(x => x.Name);
+            if (!reposNames.Contains(data.repositoryName))
+            {
+                var repo = new Database.Models.Repository
+                {
+                    Name = data.repositoryName
+                };
+            }
+            else//add this repo to other models
+            {
+                //files
+                //developerRepository
+                //commit
+            }
         }
 
         private void createDeveloperRepository(Data data, Models models)

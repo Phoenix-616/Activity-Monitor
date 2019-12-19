@@ -7,6 +7,9 @@ namespace ActivityMonitor.Database.Models
     public class Repository
     {
         public int Id { get; set; }
+        /// <summary>
+        /// has the form: <owner>/<name>
+        /// </summary>
         public string Name { get; set; }
         public ICollection<DeveloperRepository> Developers { get; set; }
         public ICollection<Commit> Commits { get; set; }

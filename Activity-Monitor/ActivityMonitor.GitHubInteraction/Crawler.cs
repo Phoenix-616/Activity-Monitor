@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using ActivityMonitor.Database.Models;
 using ActivityMonitor.Database.Models.Git.ActivityMonitor.Database.Models;
 using System.Linq;
+using System;
 
 namespace ActivityMonitor.GitHubInteraction
 {
@@ -22,10 +23,22 @@ namespace ActivityMonitor.GitHubInteraction
 
         private List<Repository> repositories = new List<Repository>();
         private List<Developer> developers = new List<Developer>();
-        private List<File> files = new List<File>();
-        private List<Database.Models.Commit> commits = new List<Database.Models.Commit>();
-        private List<CommitFile> commitFiles = new List<CommitFile>();
         private List<DeveloperRepository> developerRepository = new List<DeveloperRepository>();
+        private List<File> files = new List<File>();
+        private List<CommitFile> commitFiles = new List<CommitFile>();
+        private List<Database.Models.Commit> commits = new List<Database.Models.Commit>();
+
+        public class Data
+        {
+            public int commitSha { get; set; }
+            public string commitAuthorName { get; set; }
+            public string commitAuthorEmail { get; set; }
+            public DateTimeOffset createdAt { get; set; }
+            public string repositoryName { get; set; }
+            public IEnumerable<string> filesNames { get; set; }
+            public int additions { get; set; }
+            public int deletions { get; set; }
+        }
 
         public async Task Gathering(RepositoryAttribute [] attributes)
         {
@@ -36,6 +49,7 @@ namespace ActivityMonitor.GitHubInteraction
                 var commits = await client.Repository.Commit.GetAll(owner, name);
                 foreach(var commit in commits)
                 {
+                    var data = GetData(commit, owner, name);
                     var gitId = commit.Commit.Sha;
                     var authorName = commit.Commit.Author.Name;
                     var authorEmail = commit.Commit.Author.Email;
@@ -55,7 +69,17 @@ namespace ActivityMonitor.GitHubInteraction
                     {
                         deletions += d;
                     }
+
+
                 }
+            }
+        }
+
+        private Data GetData(GitHubCommit commit, string owner, string name)
+        {
+            var data = new Data
+            {
+
             }
         }
     }

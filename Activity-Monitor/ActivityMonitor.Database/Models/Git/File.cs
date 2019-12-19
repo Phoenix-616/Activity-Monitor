@@ -1,7 +1,6 @@
 ﻿using ActivityMonitor.Database.Models.Git.ActivityMonitor.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
 using System.Collections.Generic;
 
 namespace ActivityMonitor.Database.Models

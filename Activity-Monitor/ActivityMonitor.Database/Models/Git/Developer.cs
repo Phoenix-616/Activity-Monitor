@@ -1,10 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace ActivityMonitor.Database.Models.Git
+namespace ActivityMonitor.Database.Models
 {
     public class Developer
     {

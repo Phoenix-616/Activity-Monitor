@@ -20,13 +20,6 @@ namespace ActivityMonitor.GitHubInteraction
             client.Credentials = basicAuth;
         }
 
-        private List<Repository> repositories = new List<Repository>();
-        private List<Developer> developers = new List<Developer>();
-        private List<DeveloperRepository> developerRepository = new List<DeveloperRepository>();
-        private List<File> files = new List<File>();
-        private List<CommitFile> commitFiles = new List<CommitFile>();
-        private List<Database.Models.Commit> commits = new List<Database.Models.Commit>();
-
         public class Data
         {
             public string commitSha { get; set; }
@@ -40,7 +33,8 @@ namespace ActivityMonitor.GitHubInteraction
         }
 
         public async Task Gathering(RepositoryAttribute [] attributes)
-        {           
+        {
+            var models = new Models();
             foreach (var attr in attributes)
             {
                 var owner = attr.owner;
@@ -49,6 +43,12 @@ namespace ActivityMonitor.GitHubInteraction
                 foreach(var commit in commits)
                 {
                     var data = await GetData(commit, owner, name);
+                    createRepository(data, models);
+                    createDeveloper(data, models);
+                    createDeveloperRepository(data, models);
+                    createFile(data, models);
+                    createCommit(data, models);
+                    createCommitFile(data, models);
                 }
             }
         }

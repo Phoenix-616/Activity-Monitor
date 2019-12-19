@@ -1,18 +1,3 @@
-<<<<<<< Updated upstream
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ActivityMonitor.Database.Models.Git
-{
-    public class File
-    {
-        public Repository Repository { get; set; }
-        public string Name { get; set; }
-        public ICollection<Commit> Commits { get; set; }
-    }
-}
-=======
 ﻿using ActivityMonitor.Database.Models.Git.ActivityMonitor.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -52,4 +37,3 @@ namespace ActivityMonitor.Database.Models
         }
     }
 }
->>>>>>> Stashed changes

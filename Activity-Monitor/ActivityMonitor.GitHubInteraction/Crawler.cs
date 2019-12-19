@@ -1,6 +1,5 @@
 ﻿using Octokit;
 using System.Threading.Tasks;
-using ActivityMonitor.Database.Models.Git;
 using System.Collections.Generic;
 using ActivityMonitor.Database.Models;
 using ActivityMonitor.Database.Models.Git.ActivityMonitor.Database.Models;
@@ -41,39 +40,38 @@ namespace ActivityMonitor.GitHubInteraction
         }
 
         public async Task Gathering(RepositoryAttribute [] attributes)
-        {
-            foreach(var attr in attributes)
+        {           
+            foreach (var attr in attributes)
             {
                 var owner = attr.owner;
                 var name = attr.name;
                 var commits = await client.Repository.Commit.GetAll(owner, name);
                 foreach(var commit in commits)
                 {
-                    var data = GetData(commit, owner, name);
-                    
-
-
+                    var data = await GetData(commit, owner, name);
                 }
             }
         }
 
-        private Data GetData(GitHubCommit commit, string owner, string name)
+        private async Task<Data> GetData(GitHubCommit commit, string owner, string name)
         {
             var data = new Data
             {
-                commitSha = commit.Commit.Sha,
+                commitSha = commit.Sha,
                 commitAuthorName = commit.Commit.Author.Name,
                 commitAuthorEmail = commit.Commit.Author.Email,
                 createdAt = commit.Commit.Author.Date,
                 repositoryName = owner + "/" + name,
-                filesNames = commit.Files.Select(x => x.Filename)
             };
+            var currentCommit = await client.Repository.Commit.Get(owner, name, data.commitSha);
+            var filesNames = currentCommit.Files.Select(x => x.Filename);
+            data.filesNames = filesNames;
 
             int additions = 0;
             int deletions = 0;
 
-            var additionsArrayByCommit = commit.Files.Select(x => x.Additions);
-            var deletionsArrayByCommit = commit.Files.Select(x => x.Deletions);
+            var additionsArrayByCommit = currentCommit.Files.Select(x => x.Additions);
+            var deletionsArrayByCommit = currentCommit.Files.Select(x => x.Deletions);
             foreach (var a in additionsArrayByCommit)
             {
                 additions += a;

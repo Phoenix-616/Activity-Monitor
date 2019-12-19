@@ -43,7 +43,7 @@ namespace ActivityMonitor.GitHubInteraction
                 info = (AuthGitInfo)ser.ReadObject(fs);
             }
             var crawler = new Crawler(info.login, info.password);
-            await crawler.Gathering(info.repositories);
+                await crawler.Gathering(info.repositories);
         }
 
         private static Stream GetStream()

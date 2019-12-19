@@ -24,7 +24,7 @@ namespace ActivityMonitor.GitHubInteraction
         {
             public string commitSha { get; set; }
             public string commitAuthorName { get; set; }
-            public string commitAuthorLogin { get;set }
+            public string commitAuthorLogin { get; set; }
             public string commitAuthorEmail { get; set; }
             public DateTimeOffset createdAt { get; set; }
             public string repositoryName { get; set; }
@@ -91,6 +91,7 @@ namespace ActivityMonitor.GitHubInteraction
 
         private void createRepository(Data data, Models models)
         {
+            //if(!models.repositories.Select(x=>x.))
             throw new NotImplementedException();
         }
 

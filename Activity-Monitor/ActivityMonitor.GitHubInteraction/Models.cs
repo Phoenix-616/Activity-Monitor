@@ -6,21 +6,21 @@ namespace ActivityMonitor.GitHubInteraction
 {
     public class Models
     {
-        public List<Repository> repositories;
+        public List<Database.Models.Repository> repositories;
         public List<Developer> developers;
         public List<DeveloperRepository> developerRepository;
         public List<File> files;
         public List<CommitFile> commitFiles;
-        public List<Database.Models.Commit> commits;
+        public List<Commit> commits;
 
         public Models()
         {
-            repositories = new List<Repository>();
+            repositories = new List<Database.Models.Repository>();
             developers = new List<Developer>();
             developerRepository = new List<DeveloperRepository>();
             files = new List<File>();
             commitFiles = new List<CommitFile>();
-            commits = new List<Database.Models.Commit>();
+            commits = new List<Commit>();
         }
     }
 }

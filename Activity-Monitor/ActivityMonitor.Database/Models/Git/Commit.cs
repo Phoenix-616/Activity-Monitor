@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ActivityMonitor.Database.Models.Git;
+using ActivityMonitor.Database.Models.Git.ActivityMonitor.Database.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
@@ -8,19 +10,21 @@ namespace ActivityMonitor.Database.Models
 {
     public class Commit
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         /// <summary>
         /// Id in git-system
         /// </summary>
         public string GitId { get; set; }
-        public Guid AuthorId { get; set; }
+        public int AuthorId { get; set; }
         public Developer Author { get; set; }
-        public Guid RepositoryId { get; set; }
+        public int RepositoryId { get; set; }
         public Repository Repository { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public ICollection<CommitFile> Files { get; set; }
         public ICollection<CodeString> CreatedStrings { get; set; }
         public ICollection<CodeString> DeletedStrings { get; set; }
+        public int Created { get; set; }
+        public int Deleted { get; set; }
     }
 
     class CommitConfiguration : IEntityTypeConfiguration<Commit>

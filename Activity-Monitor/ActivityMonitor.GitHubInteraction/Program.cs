@@ -1,42 +1,54 @@
-﻿using System;
-using System.Runtime.Serialization;
+﻿using System.IO;
+using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 
 namespace ActivityMonitor.GitHubInteraction
 {
     class Program
     {
-        [DataContract]
-        class AuthGitInfo
+        public readonly string GitAuthPath = "gitAuth.json";             
+        public static void InitJson()
         {
-            [DataMember]
-            public string login { get; set; }
-            [DataMember]
-            public string password { get; set; }
-        }
+            var am = new RepositoryAttribute
+            {
+                owner = "Phoenix-616",
+                name = "Activity-Monitor"
+            };
+            var cg = new RepositoryAttribute
+            {
+                owner = "ogresed",
+                name = "CardGame"
+            };
+            RepositoryAttribute[] repositorys = new RepositoryAttribute[2];
+            repositorys[0] = am;
+            repositorys[1] = cg;
+            var a = new AuthGitInfo
+            {
+                login = "ogresed",
+                password = "enterPasswod",
+                repositories = repositorys
+            };
 
+            var stream1 = File.OpenWrite("gitAuth.json");
+            var ser = new DataContractJsonSerializer(typeof(AuthGitInfo));
+            ser.WriteObject(stream1, a);
+        }
         public static async Task Main()
         {
-            var getter = new GitHubDataGetter();
-            
-            Console.Write(await getter.GetChurn("Phoenix-616", "Activity-Monitor", "momikenSneg"));
-            Console.WriteLine();
-            Console.Write(await getter.GetCodeSize("Phoenix-616", "Activity-Monitor", "Phoenix-616"));
-            Console.WriteLine();
-
-            var contr = await getter.GetContributers("Phoenix-616", "Activity-Monitor");
-            foreach(var c in contr)
+            AuthGitInfo info;
+            using (Stream fs = GetStream())
             {
-                Console.WriteLine(c.Author.Login);
-
+                var ser = new DataContractJsonSerializer(typeof(AuthGitInfo));
+                fs.Position = 0;
+                info = (AuthGitInfo)ser.ReadObject(fs);
             }
+            var crawler = new Crawler(info.login, info.password);
+            await crawler.Gathering(info.repositories);
+        }
 
-
-
-            var punch = await getter.client.Repository.Statistics.GetPunchCard("ogresed", "CardGame");
-            var part = await getter.client.Repository.Statistics.GetParticipation("ogresed", "CardGame");
-            
-            var commAct = await getter.client.Repository.Statistics.GetCommitActivity("ogresed", "CardGame");
+        private static Stream GetStream()
+        {
+            return File.OpenRead("gitAuth.json");
         }
     }
 }

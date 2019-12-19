@@ -1,19 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ActivityMonitor.Database.Models.Git;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ActivityMonitor.Database.Models
 {
     public class Repository
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public ICollection<DeveloperRepository> Developers { get; set; }
         public ICollection<Commit> Commits { get; set; }
-        public ICollection<CodeComplexity> CodeComplexityMeasures { get; set; }
         public ICollection<File> Files { get; set; }
+        public ICollection<CodeComplexity> CodeComplexityMeasures { get; set; }
     }
 
     class RepositoryConfig : IEntityTypeConfiguration<Repository>

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ActivityMonitor.Database.Models.Git;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
@@ -8,9 +9,9 @@ namespace ActivityMonitor.Database.Models
 {
     public class DeveloperRepository
     {
-        public Guid DeveloperId { get; set; }
+        public int DeveloperId { get; set; }
         public Developer Developer { get; set; }
-        public Guid RepositoryId { get; set; }
+        public int RepositoryId { get; set; }
         public Repository Repository { get; set; }
     }
 

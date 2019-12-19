@@ -9,17 +9,17 @@ namespace ActivityMonitor.GitHubInteraction
         public readonly string GitAuthPath = "gitAuth.json";             
         public static void InitJson()
         {
-            var am = new Repository
+            var am = new RepositoryAttribute
             {
                 owner = "Phoenix-616",
                 name = "Activity-Monitor"
             };
-            var cg = new Repository
+            var cg = new RepositoryAttribute
             {
                 owner = "ogresed",
                 name = "CardGame"
             };
-            Repository[] repositorys = new Repository[2];
+            RepositoryAttribute[] repositorys = new RepositoryAttribute[2];
             repositorys[0] = am;
             repositorys[1] = cg;
             var a = new AuthGitInfo

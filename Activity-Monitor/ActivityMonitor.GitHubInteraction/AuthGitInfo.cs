@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
-using System.Text;
+﻿using System.Runtime.Serialization;
 
 namespace ActivityMonitor.GitHubInteraction
 {
@@ -15,6 +10,6 @@ namespace ActivityMonitor.GitHubInteraction
         [DataMember]
         public string password { get; set; }
         [DataMember]
-        public Repository[] repositories { get; set; }
+        public RepositoryAttribute[] repositories { get; set; }
     }
 }

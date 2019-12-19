@@ -24,6 +24,7 @@ namespace ActivityMonitor.GitHubInteraction
         {
             public string commitSha { get; set; }
             public string commitAuthorName { get; set; }
+            public string commitAuthorLogin { get;set }
             public string commitAuthorEmail { get; set; }
             public DateTimeOffset createdAt { get; set; }
             public string repositoryName { get; set; }
@@ -32,34 +33,13 @@ namespace ActivityMonitor.GitHubInteraction
             public int deletions { get; set; }
         }
 
-        public async Task<Models> Gathering(RepositoryAttribute [] attributes)
-        {
-            var models = new Models();
-            foreach (var attr in attributes)
-            {
-                var owner = attr.owner;
-                var name = attr.name;
-                var commits = await client.Repository.Commit.GetAll(owner, name);
-                foreach(var commit in commits)
-                {
-                    var data = await GetData(commit, owner, name);
-                    createRepository(data, models);
-                    createDeveloper(data, models);
-                    createDeveloperRepository(data, models);
-                    createFile(data, models);
-                    createCommit(data, models);
-                    createCommitFile(data, models);
-                }
-            }
-            return models;
-        }
-
         private async Task<Data> GetData(GitHubCommit commit, string owner, string name)
         {
             var data = new Data
             {
                 commitSha = commit.Sha,
                 commitAuthorName = commit.Commit.Author.Name,
+                commitAuthorLogin = commit.Author.Login,
                 commitAuthorEmail = commit.Commit.Author.Email,
                 createdAt = commit.Commit.Author.Date,
                 repositoryName = owner + "/" + name,
@@ -85,6 +65,28 @@ namespace ActivityMonitor.GitHubInteraction
             data.additions = additions;
             data.deletions = deletions;
             return data;
+        }
+
+        public async Task<Models> Gathering(RepositoryAttribute [] attributes)
+        {
+            var models = new Models();
+            foreach (var attr in attributes)
+            {
+                var owner = attr.owner;
+                var name = attr.name;
+                var commits = await client.Repository.Commit.GetAll(owner, name);
+                foreach(var commit in commits)
+                {
+                    var data = await GetData(commit, owner, name);
+                    /*createRepository(data, models);
+                    createDeveloper(data, models);
+                    createDeveloperRepository(data, models);
+                    createFile(data, models);
+                    createCommit(data, models);
+                    createCommitFile(data, models);*/
+                }
+            }
+            return models;
         }
     }
 }

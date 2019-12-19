@@ -78,15 +78,45 @@ namespace ActivityMonitor.GitHubInteraction
                 foreach(var commit in commits)
                 {
                     var data = await GetData(commit, owner, name);
-                    /*createRepository(data, models);
+                    createRepository(data, models);
                     createDeveloper(data, models);
                     createDeveloperRepository(data, models);
                     createFile(data, models);
                     createCommit(data, models);
-                    createCommitFile(data, models);*/
+                    createCommitFile(data, models);
                 }
             }
             return models;
+        }
+
+        private void createRepository(Data data, Models models)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void createDeveloper(Data data, Models models)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void createDeveloperRepository(Data data, Models models)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void createFile(Data data, Models models)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void createCommit(Data data, Models models)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void createCommitFile(Data data, Models models)
+        {
+            throw new NotImplementedException();
         }
     }
 }

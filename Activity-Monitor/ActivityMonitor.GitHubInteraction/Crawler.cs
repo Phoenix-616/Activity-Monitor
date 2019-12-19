@@ -32,7 +32,7 @@ namespace ActivityMonitor.GitHubInteraction
             public int deletions { get; set; }
         }
 
-        public async Task Gathering(RepositoryAttribute [] attributes)
+        public async Task<Models> Gathering(RepositoryAttribute [] attributes)
         {
             var models = new Models();
             foreach (var attr in attributes)
@@ -51,6 +51,7 @@ namespace ActivityMonitor.GitHubInteraction
                     createCommitFile(data, models);
                 }
             }
+            return models;
         }
 
         private async Task<Data> GetData(GitHubCommit commit, string owner, string name)

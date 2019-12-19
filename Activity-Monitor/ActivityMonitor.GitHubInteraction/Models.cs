@@ -6,12 +6,12 @@ namespace ActivityMonitor.GitHubInteraction
 {
     public class Models
     {
-        private List<Repository> repositories;
-        private List<Developer> developers;
-        private List<DeveloperRepository> developerRepository;
-        private List<File> files;
-        private List<CommitFile> commitFiles;
-        private List<Database.Models.Commit> commits;
+        public List<Repository> repositories;
+        public List<Developer> developers;
+        public List<DeveloperRepository> developerRepository;
+        public List<File> files;
+        public List<CommitFile> commitFiles;
+        public List<Database.Models.Commit> commits;
 
         public Models()
         {

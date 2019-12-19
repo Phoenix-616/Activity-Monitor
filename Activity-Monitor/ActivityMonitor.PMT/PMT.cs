@@ -4,10 +4,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Runtime.Serialization.Json;
+using Newtonsoft.Json;
 
 namespace ActivityMonitor.PMT
 {
-    class PMT : APMT
+    public class PMT : APMT
     {
         public PMT(string login, string password, Uri pmtUri) : base(login, password, pmtUri)
         {
@@ -15,9 +16,8 @@ namespace ActivityMonitor.PMT
 
         public override async Task<Project[]> GetProjects()
         {
-            var serializer = new DataContractJsonSerializer(typeof(Projects));
-            var streamTask = base._client.GetStreamAsync("/projects.json");
-            var projects = serializer.ReadObject(await streamTask) as Projects;
+            var str = await _client.GetStringAsync("/projects.json");
+            var projects = JsonConvert.DeserializeObject<Projects>(str);
 
             return projects.projects;
         }
@@ -25,9 +25,8 @@ namespace ActivityMonitor.PMT
         public override async Task<Membership[]> GetProjectUsers(int projectId)
         {
             string url = $"/projects/{projectId}/memberships.json";
-            var serializer = new DataContractJsonSerializer(typeof(Memberships));
-            var streamTask = base._client.GetStreamAsync(url);
-            var memberships = serializer.ReadObject(await streamTask) as Memberships;
+            var str = await base._client.GetStringAsync(url);
+            var memberships = JsonConvert.DeserializeObject<Memberships>(str);
 
             return memberships.memberships;
         }
@@ -35,9 +34,8 @@ namespace ActivityMonitor.PMT
         public override async Task<Issue[]> GetTaskList(int projectId)
         {
             string url = $"/issues.json?project_id={projectId}";
-            var serializer = new DataContractJsonSerializer(typeof(Issues));
-            var streamTask = base._client.GetStreamAsync(url);
-            var issues = serializer.ReadObject(await streamTask) as Issues;
+            var str = await base._client.GetStringAsync(url);
+            var issues = JsonConvert.DeserializeObject<Issues>(str);
 
             return issues.issues;
         }
@@ -45,9 +43,8 @@ namespace ActivityMonitor.PMT
         public override async Task<IssueHistory[]> GetTaskHistory(int issueId)
         {
             string url = $"/issues/{issueId}.json?include=journals";
-            var serializer = new DataContractJsonSerializer(typeof(ForProjectHistory));
-            var streamTask = base._client.GetStreamAsync(url);
-            var issueHistory = serializer.ReadObject(await streamTask) as ForProjectHistory;
+            var str = await base._client.GetStringAsync(url);
+            var issueHistory = JsonConvert.DeserializeObject<ForProjectHistory>(str);
 
             return issueHistory.issue.journals;
         }
@@ -119,10 +116,11 @@ namespace ActivityMonitor.PMT
 
     public class IssueHistory
     {
-        public int id;
-        public IdName user;
-        public string notes;
-        public DateTime created_on;
+        public int id { get; set; }
+        public IdName user { get; set; }
+        public string notes { get; set; }
+        public DateTime created_on { get; set; }
+        public Details[] details { get; set; }
     }
 
     public class Details

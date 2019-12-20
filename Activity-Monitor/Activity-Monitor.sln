@@ -11,7 +11,22 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ActivityMonitor.PMT", "Acti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ActivityMonitor.GitHubInteraction", "ActivityMonitor.GitHubInteraction\ActivityMonitor.GitHubInteraction.csproj", "{0905D5D2-D7D3-4E0F-A38D-73F4D611762E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActivityMonitor.TestApp", "ActivityMonitor.TestApp\ActivityMonitor.TestApp.csproj", "{C3466377-4607-4A05-B77B-6ABC07DEA6A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ActivityMonitor.TestApp", "ActivityMonitor.TestApp\ActivityMonitor.TestApp.csproj", "{C3466377-4607-4A05-B77B-6ABC07DEA6A4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Features", "Features", "{DF185DBB-ACE6-4005-8A0F-6572CB12396D}"
+	ProjectSection(SolutionItems) = preProject
+		req2515.feature = req2515.feature
+		req2516.feature = req2516.feature
+		req2517.feature = req2517.feature
+		req2518.feature = req2518.feature
+		req2519.feature = req2519.feature
+		req2520.feature = req2520.feature
+		req2521.feature = req2521.feature
+		req2522.feature = req2522.feature
+		req2523.feature = req2523.feature
+		req2524.feature = req2524.feature
+		req2525.feature = req2525.feature
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

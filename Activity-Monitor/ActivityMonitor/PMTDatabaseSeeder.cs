@@ -83,7 +83,11 @@ namespace ActivityMonitor
                     MembershipId = memberships[i].user.id
                 };
 
-                context.Memberships.Add(one);
+                var f = await context.Memberships.FindAsync(one);
+                 
+                if (f == null)
+                    context.Memberships.Add(one);
+
                 context.ProjectMemberships.Add(pm);
             }
         }

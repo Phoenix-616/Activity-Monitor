@@ -31,13 +31,13 @@ namespace ActivityMonitor.PMT
             return memberships.memberships;
         }
 
-        public override async Task<Issue[]> GetTaskList(int projectId)
+        public override async Task<Tasks> GetTaskList(int projectId, int offset)
         {
-            string url = $"/issues.json?project_id={projectId}";
+            string url = $"/issues.json?project_id={projectId}&offset={offset}";
             var str = await base._client.GetStringAsync(url);
-            var issues = JsonConvert.DeserializeObject<Issues>(str);
+            var issues = JsonConvert.DeserializeObject<Tasks>(str);
 
-            return issues.issues;
+            return issues;
         }
 
         public override async Task<IssueHistory[]> GetTaskHistory(int issueId)
@@ -58,7 +58,7 @@ namespace ActivityMonitor.PMT
 
     class ForProjectHistory
     {
-        public Issue issue { get; set; }
+        public Task issue { get; set; }
     }
 
     class Memberships
@@ -66,9 +66,12 @@ namespace ActivityMonitor.PMT
         public Membership[] memberships { get; set; }
     }
 
-    class Issues
+    public class Tasks
     {
-        public Issue[] issues { get; set; }
+        public Task[] issues { get; set; }
+        public int total_count { get; set; }
+        public int offset { get; set; }
+        public int limit { get; set; }
     }
 
     public class Project
@@ -97,7 +100,7 @@ namespace ActivityMonitor.PMT
         public IdName[] roles { get; set; }
     }
 
-    public class Issue
+    public class Task
     {
         public int id { get; set; }
         public IdName tracker { get; set; }

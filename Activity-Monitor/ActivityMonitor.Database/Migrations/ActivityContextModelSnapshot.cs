@@ -169,7 +169,7 @@ namespace ActivityMonitor.Database.Migrations
 
                     b.Property<DateTime>("DueDate");
 
-                    b.Property<int?>("MembershipId");
+                    b.Property<int>("MembershipId");
 
                     b.Property<int>("ProjectId");
 
@@ -362,7 +362,8 @@ namespace ActivityMonitor.Database.Migrations
                 {
                     b.HasOne("ActivityMonitor.Database.Models.Membership")
                         .WithMany("Issues")
-                        .HasForeignKey("MembershipId");
+                        .HasForeignKey("MembershipId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ActivityMonitor.Database.Models.Project")
                         .WithMany("Issues")

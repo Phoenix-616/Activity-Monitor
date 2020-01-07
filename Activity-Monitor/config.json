@@ -5,5 +5,13 @@
 	"PMTProjects": 
 	[
 		"ActivityMonitor"
+	],
+	"GitLogin":"ogresed",
+	"GitPassword":"lolkekarbidol12",
+	"GitRepositories":
+	[
+	{"name":"Activity-Monitor",
+	"owner":"Phoenix-616"
+	}
 	]
 }

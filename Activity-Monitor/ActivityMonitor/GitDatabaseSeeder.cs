@@ -6,7 +6,10 @@ namespace ActivityMonitor
 {
     class GitDatabaseSeeder : DatabaseSeeder
     {
-        public GitDatabaseSeeder(ActivityContext context, string login, string password) : base(context)
+        public GitDatabaseSeeder(ActivityContext context,
+                                 string login,
+                                 string password,
+                                 RepositoryAttribute[] attributes) : base(context)
         {
         }
 

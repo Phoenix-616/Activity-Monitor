@@ -33,6 +33,12 @@ namespace ActivityMonitor
                     );
 
                 await seeder.Seed();*/
+
+                var gitSeeder = new GitDatabaseSeeder(context,
+                                                      config.GitLogin,
+                                                      config.GitPassword,
+                                                      config.GitRepositories);
+                await gitSeeder.Seed();
             }
 
         }

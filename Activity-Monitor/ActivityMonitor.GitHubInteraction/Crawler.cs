@@ -14,6 +14,10 @@ namespace ActivityMonitor.GitHubInteraction
 
         public class Data
         {
+            public int DevID { get; set; }
+            public int RepID { get; set; }
+            public int CommitID { get; set; }
+            public int FileID { get; set; }
             public string CommitSha { get; set; }
             public string CommitAuthorFirstName { get; set; }
             public string CommitAuthorLastName { get; set; }
@@ -21,24 +25,35 @@ namespace ActivityMonitor.GitHubInteraction
             public string CommitAuthorEmail { get; set; }
             public DateTimeOffset CreatedAt { get; set; }
             public string RepositoryName { get; set; }
-            public IEnumerable<string> FilesNames { get; set; }
+            public IEnumerable<NameAndSha> NameAndSha { get; set; }
             public int Additions { get; set; }
             public int Deletions { get; set; }
+        }
+        public class NameAndSha
+        {
+            public string Name { get; set; }
+            public int Sha { get; set; }
         }
         private async Task<Data> GetData(GitHubCommit commit, string owner, string name)
         {
             var data = new Data
             {
+                CommitID = GetIntIdByString(commit.Sha),
+
                 CommitSha = commit.Sha,
                 CommitAuthorEmail = commit.Commit.Author.Email,
                 CreatedAt = commit.Commit.Author.Date,
                 RepositoryName = owner + "/" + name,
             };
             await FillInfoByLogin(commit, data);
-
+            
             var currentCommit = await client.Repository.Commit.Get(owner, name, data.CommitSha);
-            var filesNames = currentCommit.Files.Select(x => x.Filename);
-            data.FilesNames = filesNames;
+            var nameAndSha = currentCommit.Files.Select(x => new NameAndSha 
+            {
+                Name = x.Filename, 
+                Sha = GetIntIdByString(x.Sha)
+            });
+            data.NameAndSha = nameAndSha;
 
             int additions = 0;
             int deletions = 0;
@@ -68,6 +83,8 @@ namespace ActivityMonitor.GitHubInteraction
                 data.CommitAuthorFirstName = fullName[0];
                 data.CommitAuthorLastName = fullName[1];
                 data.CommitAuthorLogin = "";
+
+                data.DevID = GetIntIdByString(fullName[0] + fullName[1]);
             }
             else
             {
@@ -77,7 +94,14 @@ namespace ActivityMonitor.GitHubInteraction
                 data.CommitAuthorFirstName = fullName[0];
                 data.CommitAuthorLastName = fullName[1];
                 data.CommitAuthorLogin = login;
+
+                data.DevID = author.Id;
             }
+        }
+
+        static public int GetIntIdByString(string id)
+        {
+            return (int)(id.GetHashCode());
         }
 
         private async Task<User> GetUser(string login)
@@ -95,9 +119,11 @@ namespace ActivityMonitor.GitHubInteraction
         {
             var list = new List<Data>();
             var commits = await client.Repository.Commit.GetAll(owner, name);
+            var RepID = (int)(await client.Repository.Get(owner, name)).Id;
             foreach (var commit in commits)
             {
                 var data = await GetData(commit, owner, name);
+                data.RepID = RepID;
                 list.Add(data);
             }
             return list;

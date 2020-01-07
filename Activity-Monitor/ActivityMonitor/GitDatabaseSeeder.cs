@@ -26,20 +26,14 @@ namespace ActivityMonitor
             {
                 var owner = repo.Owner;
                 var name = repo.Name;
-                var dates = await crawler.DataGather(owner, name);
-
-                var devKeys = new List<int>();
-                var repKeys = new List<string>();
+                var datas = await crawler.DataGather(owner, name);
+                
+                /*var devKeys = new List<int>();
+                var repKeys = new List<int>();
                 var commKeys = new List<int>();
-                var fileKeys = new List<int>();
-                foreach (var data in dates) 
+                var fileKeys = new List<int>();*/
+                foreach (var data in datas) 
                 {
-                    if(!repKeys.Contains(data.RepositoryName))
-                    {
-                        var rep = new Repository { Name = data.RepositoryName };
-                        context.Repositories.Add(rep);
-                    }
-
                 }
             }
 

@@ -5,7 +5,7 @@ namespace ActivityMonitor
 {
     public abstract class DatabaseSeeder
     {
-        ActivityContext context;
+        protected ActivityContext context;
         public DatabaseSeeder(ActivityContext context)
         {
             this.context = context;

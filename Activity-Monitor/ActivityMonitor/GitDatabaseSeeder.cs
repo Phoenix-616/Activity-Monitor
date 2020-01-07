@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using ActivityMonitor.Database;
 using ActivityMonitor.GitHubInteraction;
 
@@ -26,9 +27,10 @@ namespace ActivityMonitor
                 var dates = await crawler.DataGather(owner, name);
                 foreach(var data in dates) 
                 {
-
                 }
             }
+
+            context.SaveChanges();
         }
     }
 }

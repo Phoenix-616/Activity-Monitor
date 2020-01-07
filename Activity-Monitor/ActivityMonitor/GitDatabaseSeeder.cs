@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ActivityMonitor.Database;
+using ActivityMonitor.Database.Models;
 using ActivityMonitor.GitHubInteraction;
 
 namespace ActivityMonitor
@@ -25,8 +27,19 @@ namespace ActivityMonitor
                 var owner = repo.Owner;
                 var name = repo.Name;
                 var dates = await crawler.DataGather(owner, name);
-                foreach(var data in dates) 
+
+                var devKeys = new List<int>();
+                var repKeys = new List<string>();
+                var commKeys = new List<int>();
+                var fileKeys = new List<int>();
+                foreach (var data in dates) 
                 {
+                    if(!repKeys.Contains(data.RepositoryName))
+                    {
+                        var rep = new Repository { Name = data.RepositoryName };
+                        context.Repositories.Add(rep);
+                    }
+
                 }
             }
 

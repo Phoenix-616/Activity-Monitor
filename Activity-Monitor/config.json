@@ -10,7 +10,8 @@
 	"GitPassword":"lolkekarbidol12",
 	"GitRepositories":
 	[
-	{"name":"Activity-Monitor",
+	{
+	"name":"Activity-Monitor",
 	"owner":"Phoenix-616"
 	}
 	]

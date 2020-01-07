@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ActivityMonitor.Database\ActivityMonitor.Database.csproj" />
+    <ProjectReference Include="..\ActivityMonitor.GitHubInteraction\ActivityMonitor.GitHubInteraction.csproj" />
     <ProjectReference Include="..\ActivityMonitor.PMT\ActivityMonitor.PMT.csproj" />
   </ItemGroup>
 

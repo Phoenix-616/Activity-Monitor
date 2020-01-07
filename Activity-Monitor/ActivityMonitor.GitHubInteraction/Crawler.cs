@@ -59,6 +59,19 @@ namespace ActivityMonitor.GitHubInteraction
             data.Deletions = deletions;
             return data;
         }
+
+        public async Task<List<Data>> DataGather(string owner, string name)
+        {
+            var list = new List<Data>();
+            var commits = await client.Repository.Commit.GetAll(owner, name);
+            foreach (var commit in commits)
+            {
+                var data = await GetData(commit, owner, name);
+                list.Add(data);
+            }
+            return list;
+        }
+
         public Crawler(string login, string password)
         {
             client = new GitHubClient(new ProductHeaderValue(NameOfApp));

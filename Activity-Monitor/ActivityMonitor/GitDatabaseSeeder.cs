@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ActivityMonitor.Database;
 using ActivityMonitor.GitHubInteraction;
 
@@ -8,19 +7,28 @@ namespace ActivityMonitor
     class GitDatabaseSeeder : DatabaseSeeder
     {
         private Crawler crawler;
-        RepositoryAttribute[] attributes;
+        RepositoryAttribute[] repositories;
         public GitDatabaseSeeder(ActivityContext context,
                                  string login,
                                  string password,
-                                 RepositoryAttribute[] attributes) : base(context)
+                                 RepositoryAttribute[] repositories) : base(context)
         {
             crawler = new Crawler(login, password);
-            this.attributes = attributes;
+            this.repositories = repositories;
         }
 
-        public override Task Seed()
+        public override async Task Seed()
         {
-            throw new NotImplementedException();
+            foreach (var repo in repositories)
+            {
+                var owner = repo.Owner;
+                var name = repo.Name;
+                var dates = await crawler.DataGather(owner, name);
+                foreach(var data in dates) 
+                {
+
+                }
+            }
         }
     }
 }

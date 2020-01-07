@@ -1,6 +1,15 @@
-﻿namespace ActivityMonitor
+﻿using ActivityMonitor.Database;
+using System.Threading.Tasks;
+
+namespace ActivityMonitor
 {
-    abstract class DatabaseSeeder
+    public abstract class DatabaseSeeder
     {
+        ActivityContext context;
+        public DatabaseSeeder(ActivityContext context)
+        {
+            this.context = context;
+        }
+        public abstract Task Seed();
     }
 }

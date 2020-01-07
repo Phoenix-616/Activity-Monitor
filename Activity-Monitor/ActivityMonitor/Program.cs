@@ -24,7 +24,7 @@ namespace ActivityMonitor
                 var config = JsonConvert.DeserializeObject<Configuration>(json);
 
                 ActivityContext context = new ActivityContext();
-                PMTDatabaseSeeder seeder = new PMTDatabaseSeeder(
+                /*PMTDatabaseSeeder seeder = new PMTDatabaseSeeder(
                     context,
                     config.PMTProjects,
                     config.PMTLogin,
@@ -32,7 +32,7 @@ namespace ActivityMonitor
                     config.PMTUri
                     );
 
-                await seeder.Seed();
+                await seeder.Seed();*/
             }
 
         }

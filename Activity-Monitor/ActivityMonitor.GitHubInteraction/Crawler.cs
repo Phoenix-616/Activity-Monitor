@@ -32,7 +32,7 @@ namespace ActivityMonitor.GitHubInteraction
         public class NameAndSha
         {
             public string Name { get; set; }
-            public int Sha { get; set; }
+            public int Id { get; set; }
         }
         private async Task<Data> GetData(GitHubCommit commit, string owner, string name)
         {
@@ -51,7 +51,7 @@ namespace ActivityMonitor.GitHubInteraction
             var nameAndSha = currentCommit.Files.Select(x => new NameAndSha 
             {
                 Name = x.Filename, 
-                Sha = GetIntIdByString(x.Sha)
+                Id = GetIntIdByString(x.Sha)
             });
             data.NameAndSha = nameAndSha;
 

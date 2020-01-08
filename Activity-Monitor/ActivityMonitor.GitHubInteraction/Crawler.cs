@@ -1,4 +1,6 @@
-﻿using Octokit;
+﻿using ActivityMonitor.Database.Models;
+using ActivityMonitor.Database.Models.Git.ActivityMonitor.Database.Models;
+using Octokit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +31,141 @@ namespace ActivityMonitor.GitHubInteraction
             public int Additions { get; set; }
             public int Deletions { get; set; }
         }
+
+        public class Entities
+        {
+            public List<Database.Models.Repository> repositories { get; set; }
+            public List<Database.Models.Developer> developers { get; set; }
+            public List<Database.Models.DeveloperRepository> developerRepositories{ get; set; }
+            public List<Database.Models.File> files { get; set; }
+            public List<Database.Models.Commit> commits{ get; set; }
+            public List<Database.Models.Git.ActivityMonitor.Database.Models.CommitFile> commitFiles{ get; set; }
+        }
+
+        public async Task<Entities> Get(string owner, string name)
+        {
+            var datas = await DataGather(owner, name);
+            var entities = new Entities();
+
+            entities.repositories = CreateRepos(datas);
+            entities.developers = CreateDevs(datas);
+            entities.developerRepositories = CreateDevReps(datas,
+                                                           entities.repositories,
+                                                           entities.developers);
+            entities.files = CreateFiles(datas);
+            entities.commits = CreateCommit(datas);
+            entities.commitFiles = CreateCommitFiles(datas);
+
+            return entities;
+        }
+
+        private List<CommitFile> CreateCommitFiles(List<Data> datas)
+        {
+            var list = new List<CommitFile>();
+            foreach(var data in datas)
+            {
+                foreach(var file in data.NameAndSha)
+                {
+                    if(!list.Any(x => x.CommitId == data.CommitID && x.FileId == file.Id))
+                    {
+                        list.Add(new CommitFile
+                        {
+                            CommitId = data.CommitID,
+                            FileId = data.FileID
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        private List<Database.Models.Commit> CreateCommit(List<Data> datas)
+        {
+            var list = new List<Database.Models.Commit>();
+            foreach(var data in datas)
+            {
+                list.Add(new Database.Models.Commit
+                {
+                    Id = data.CommitID,
+                    GitId = data.CommitSha,
+                    AuthorId = data.DevID,
+                    RepositoryId = data.RepID,
+                    CreatedAt = data.CreatedAt,
+                    Created = data.Additions,
+                    Deleted = data.Deletions
+                }
+                );
+            }
+            return list;
+        }
+
+        private List<File> CreateFiles(List<Data> datas)
+        {
+            var list = new List<File>();
+            foreach(var data in datas)
+            {
+                foreach(var file in data.NameAndSha)
+                {
+                    var id = file.Id;
+                    var name = file.Name;
+                    var repId = data.RepID;
+                    if(!list.Any(x => x.Id == id && x.Name == name && x.RepositoryId == repId))
+                    {
+                        list.Add(new File { Id = id, Name = name, RepositoryId = repId });
+                    }
+                }
+            }
+            return list;
+        }
+
+        private List<DeveloperRepository> CreateDevReps(List<Data> datas,
+                                                        List<Database.Models.Repository> repositories,
+                                                        List<Developer> developers)
+        {
+            var list = new List<DeveloperRepository>();
+            foreach(var data in datas)
+            {
+                if(!list.Any(x => x.RepositoryId == data.RepID && x.DeveloperId == data.DevID))
+                {
+                    list.Add(new DeveloperRepository { RepositoryId = data.RepID, DeveloperId = data.DevID,
+                    Repository = repositories.Where(x => x.Name == data.RepositoryName).ToArray()[0],
+                    Developer = developers.Where(x => x.Email == data.CommitAuthorEmail).ToArray()[0]
+                    });
+                }
+            }
+            return list;
+        }
+
+        private List<Developer> CreateDevs(List<Data> datas)
+        {
+            var devs = new List<Developer>();
+            foreach (var data in datas)
+            {
+                if (!devs.Any(x => x.Email == data.CommitAuthorEmail))
+                {
+                    devs.Add(new Developer
+                    { Id = data.DevID, FirstName = data.CommitAuthorFirstName,
+                     LastName = data.CommitAuthorLastName, Login = data.CommitAuthorLogin,
+                    Email = data.CommitAuthorEmail});
+                }
+            }
+            return devs;
+        }
+
+        private List<Database.Models.Repository> CreateRepos(List<Data> datas)
+        {
+            var repos = new List<Database.Models.Repository>();
+            foreach (var data in datas)
+            {
+                if (!repos.Any(x => x.Name == data.RepositoryName))
+                {
+                    repos.Add(new Database.Models.Repository
+                    { Id = data.RepID, Name = data.RepositoryName });
+                }
+            }
+            return repos;
+        }
+
         public class NameAndSha
         {
             public string Name { get; set; }
@@ -86,7 +223,7 @@ namespace ActivityMonitor.GitHubInteraction
                 data.CommitAuthorLastName = lastName;
                 data.CommitAuthorLogin = "";
 
-                data.DevID = GetIntIdByString(firstName + lastName);
+                data.DevID = GetIntIdByString(data.CommitAuthorEmail + firstName + lastName);
             }
             else
             {
@@ -99,7 +236,8 @@ namespace ActivityMonitor.GitHubInteraction
                 data.CommitAuthorLastName = lastName;
                 data.CommitAuthorLogin = login;
 
-                data.DevID = author.Id;
+                //data.DevID = author.Id;
+                data.DevID = GetIntIdByString(data.CommitAuthorEmail + firstName + lastName);
             }
         }
 

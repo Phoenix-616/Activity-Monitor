@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ActivityMonitor.Database;
 using ActivityMonitor.Database.Models;
@@ -19,6 +21,12 @@ namespace ActivityMonitor
             this.repositories = repositories;
         }
 
+        public class Pair
+        {
+            public int First { get; set; }
+            public int Second { get; set; }
+        }
+
         public override async Task Seed()
         {
             foreach (var repo in repositories)
@@ -27,16 +35,23 @@ namespace ActivityMonitor
                 var name = repo.Name;
                 var datas = await crawler.DataGather(owner, name);
 
+                var repKeys = new List<int>();
+                var devpKeys = new List<int>();
+                // f - rep, s - dev
+                var devRepKeys = new List<Pair>();
+                /*var fileKeys = new List<int>();
+                var commKeys = new List<int>();*/
                 foreach (var data in datas) 
                 {
-                    AddRepository(data);
-                    AddDeveloper(data);
-                    AddFiles(data);
-                    AddCommits(data);
+                    await AddRepository(data, repKeys);
+                    await AddDeveloper(data, devpKeys);
+                    await AddRepAndDev(data, devpKeys, repKeys, devRepKeys);
+                    /*AddFiles(data);
+                    AddCommits(data);*/
                 }
             }
             
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
         private void AddCommits(Crawler.Data data)
@@ -84,49 +99,61 @@ namespace ActivityMonitor
             }
         }
 
-        private void AddDeveloper(Crawler.Data data)
+        private async Task AddRepAndDev(Crawler.Data data,
+                                  List<int> devpKeys,
+                                  List<int> repKeys,
+                                  List<Pair> devRepKeys)
+        {
+            if (repKeys.Contains(data.RepID) && devpKeys.Contains(data.DevID) &&
+                !devRepKeys.Any(x => x.First == data.RepID && x.Second == data.DevID) &&
+                !(context.DeveloperRepositories.Any(x => x.RepositoryId == data.RepID &&
+                    x.DeveloperId == data.DevID)))
+            {
+                devRepKeys.Add(new Pair { First = data.RepID, Second = data.DevID });
+                await context.DeveloperRepositories.AddAsync(new DeveloperRepository
+                {
+                    DeveloperId = data.DevID,
+                    RepositoryId = data.RepID
+                });
+            }
+        }
+        private async Task AddDeveloper(Crawler.Data data,
+                                  List<int> devKeys)
         {
             var devId = data.DevID;
-            if (!context.Developers.Any(x => x.Id == devId))
+            if (!devKeys.Contains(devId))
             {
-                context.Developers.Add(new Developer
+                devKeys.Add(devId);
+                var devs = context.Developers.Where(x => x.Email == data.CommitAuthorEmail).ToArray();
+                if (devs.Count() == 0)
                 {
-                    Id = devId,
-                    FirstName = data.CommitAuthorFirstName,
-                    LastName = data.CommitAuthorLastName,
-                    Login = data.CommitAuthorLogin,
-                    Email = data.CommitAuthorEmail
-                });
-                if (!(context.DeveloperRepositories.Any(x => x.RepositoryId == data.RepID &&
-                     x.DeveloperId == data.DevID)))
-                {
-                    context.DeveloperRepositories.Add(new DeveloperRepository
+                    await context.Developers.AddAsync(new Developer
                     {
-                        DeveloperId = data.DevID,
-                        RepositoryId = data.RepID
+                        Id = devId,
+                        FirstName = data.CommitAuthorFirstName,
+                        LastName = data.CommitAuthorLastName,
+                        Login = data.CommitAuthorLogin,
+                        Email = data.CommitAuthorEmail
                     });
                 }
             }
         }
 
-        private void AddRepository(Crawler.Data data)
+        private async Task AddRepository(Crawler.Data data,
+                                   List<int> repKeys)
         {
+            var repos = context.Repositories.Where(x => x.Name == data.RepositoryName).ToArray();
             var repId = data.RepID;
-            if (!context.Repositories.Any(x => x.Id == repId))
+
+            if (!repKeys.Contains(repId)) 
             {
-                context.Repositories.Add(new Repository
+                repKeys.Add(repId);
+                if (repos.Length == 0) 
                 {
-                    Id = repId,
-                    Name = data.RepositoryName
-                });
-                if (context.Developers.Any(x => x.Id == data.DevID) && 
-                    !(context.DeveloperRepositories.Any(x => x.RepositoryId == data.RepID && 
-                    x.DeveloperId == data.DevID)))
-                {
-                    context.DeveloperRepositories.Add(new DeveloperRepository
+                    await context.Repositories.AddAsync(new Repository
                     {
-                        DeveloperId = data.DevID,
-                        RepositoryId = data.RepID
+                        Id = repId,
+                        Name = data.RepositoryName
                     });
                 }
             }

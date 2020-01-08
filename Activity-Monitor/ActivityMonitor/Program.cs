@@ -38,11 +38,12 @@ namespace ActivityMonitor
                                                       config.GitLogin,
                                                       config.GitPassword,
                                                       config.GitRepositories);
+                await gitSeeder.Seed();
                 try
                 {
-                    await gitSeeder.Seed();
+                    
                 }
-                catch (System.InvalidOperationException) { }
+                catch (InvalidOperationException) { }
             }
         }
     }

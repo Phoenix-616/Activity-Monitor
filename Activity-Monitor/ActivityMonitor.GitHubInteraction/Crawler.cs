@@ -80,22 +80,38 @@ namespace ActivityMonitor.GitHubInteraction
             if(author == null)
             {
                 var fullName = commit.Commit.Author.Name.Split(" ");
-                data.CommitAuthorFirstName = fullName[0];
-                data.CommitAuthorLastName = fullName[1];
+                var firstName = GetEmptyOrName(0, fullName);
+                var lastName = GetEmptyOrName(1, fullName);
+                data.CommitAuthorFirstName = firstName;
+                data.CommitAuthorLastName = lastName;
                 data.CommitAuthorLogin = "";
 
-                data.DevID = GetIntIdByString(fullName[0] + fullName[1]);
+                data.DevID = GetIntIdByString(firstName + lastName);
             }
             else
             {
                 var login = author.Login;
                 var user = await GetUser(login);
                 var fullName = user.Name.Split(" ");
-                data.CommitAuthorFirstName = fullName[0];
-                data.CommitAuthorLastName = fullName[1];
+                var firstName = GetEmptyOrName(0, fullName);
+                var lastName = GetEmptyOrName(1, fullName);
+                data.CommitAuthorFirstName = firstName;
+                data.CommitAuthorLastName = lastName;
                 data.CommitAuthorLogin = login;
 
                 data.DevID = author.Id;
+            }
+        }
+
+        private string GetEmptyOrName(int i, string[] vs)
+        {
+            try
+            {
+                return vs[i];
+            }
+            catch (IndexOutOfRangeException)
+            {
+                return "";
             }
         }
 

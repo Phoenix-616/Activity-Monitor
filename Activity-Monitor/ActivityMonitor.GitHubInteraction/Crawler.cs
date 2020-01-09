@@ -35,11 +35,11 @@ namespace ActivityMonitor.GitHubInteraction
         public class Entities
         {
             public List<Database.Models.Repository> repositories { get; set; }
-            public List<Database.Models.Developer> developers { get; set; }
-            public List<Database.Models.DeveloperRepository> developerRepositories{ get; set; }
-            public List<Database.Models.File> files { get; set; }
-            public List<Database.Models.Commit> commits{ get; set; }
-            public List<Database.Models.Git.ActivityMonitor.Database.Models.CommitFile> commitFiles{ get; set; }
+            public List<Developer> developers { get; set; }
+            public List<DeveloperRepository> developerRepositories{ get; set; }
+            public List<FileInfo> files { get; set; }
+            public List<CommitInfo> commits{ get; set; }
+            public List<CommitFile> commitFiles{ get; set; }
         }
 
         public async Task<Entities> Get(string owner, string name)
@@ -79,17 +79,28 @@ namespace ActivityMonitor.GitHubInteraction
             return list;
         }
 
-        private List<Database.Models.Commit> CreateCommit(List<Data> datas)
+        public class CommitInfo
         {
-            var list = new List<Database.Models.Commit>();
+            public int Id { get; set; }
+            public string GitId { get; set; }
+            public string AuthorEmail { get; set; }
+            public string RepositoryName { get; set; }
+            public DateTimeOffset CreatedAt { get; set; }
+            public int Created { get; set; }
+            public int Deleted { get; set; }
+        }
+
+        private List<CommitInfo> CreateCommit(List<Data> datas)
+        {
+            var list = new List<CommitInfo>();
             foreach(var data in datas)
             {
-                list.Add(new Database.Models.Commit
+                list.Add(new CommitInfo
                 {
                     Id = data.CommitID,
                     GitId = data.CommitSha,
-                    AuthorId = data.DevID,
-                    RepositoryId = data.RepID,
+                    AuthorEmail = data.CommitAuthorEmail,
+                    RepositoryName = data.RepositoryName,
                     CreatedAt = data.CreatedAt,
                     Created = data.Additions,
                     Deleted = data.Deletions
@@ -99,21 +110,38 @@ namespace ActivityMonitor.GitHubInteraction
             return list;
         }
 
-        private List<File> CreateFiles(List<Data> datas)
+        public class FileInfo
         {
-            var list = new List<File>();
+            public int Id { get; set; }
+            public string Name { get; set; }
+            public int RepId { get; set; }
+            public string RepName { get; set; }
+        }
+
+        private List<FileInfo> CreateFiles(List<Data> datas)
+        {
+            var list = new List<FileInfo>();
+            var delList = new List<string>();
             foreach(var data in datas)
             {
                 foreach(var file in data.NameAndSha)
                 {
                     var id = file.Id;
                     var name = file.Name;
-                    var repId = data.RepID;
-                    if(!list.Any(x => x.Id == id && x.Name == name && x.RepositoryId == repId))
+                    var RepName = data.RepositoryName;
+                    if(!list.Any(x => x.Id == id || (x.Name == name && x.RepName == RepName)))
                     {
-                        list.Add(new File { Id = id, Name = name, RepositoryId = repId });
+                        if ("removed".Equals(file.Status))
+                        {
+                            delList.Add(name);
+                        }
+                        list.Add(new FileInfo { Id = id, Name = name, RepId = data.RepID, RepName = RepName });
                     }
                 }
+            }
+            foreach(var delName in delList)
+            {
+                list.RemoveAll(x => x.Name == delName);
             }
             return list;
         }
@@ -168,6 +196,7 @@ namespace ActivityMonitor.GitHubInteraction
 
         public class NameAndSha
         {
+            public string Status { get; set; }
             public string Name { get; set; }
             public int Id { get; set; }
         }
@@ -185,8 +214,10 @@ namespace ActivityMonitor.GitHubInteraction
             await FillInfoByLogin(commit, data);
             
             var currentCommit = await client.Repository.Commit.Get(owner, name, data.CommitSha);
-            var nameAndSha = currentCommit.Files.Select(x => new NameAndSha 
+            var nameAndSha = currentCommit.Files
+            .Select(x => new NameAndSha 
             {
+                Status = x.Status,
                 Name = x.Filename, 
                 Id = GetIntIdByString(x.Sha)
             });

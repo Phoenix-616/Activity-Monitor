@@ -12,7 +12,7 @@ namespace ActivityMonitor
     class Program
     {
         static async Task Main(string[] args)
-        {
+        {            
             if (args == null)
             {
                 throw new ArgumentNullException(nameof(args));
@@ -39,11 +39,6 @@ namespace ActivityMonitor
                                                       config.GitPassword,
                                                       config.GitRepositories);
                 await gitSeeder.Seed();
-                try
-                {
-                    
-                }
-                catch (InvalidOperationException) { }
             }
         }
     }

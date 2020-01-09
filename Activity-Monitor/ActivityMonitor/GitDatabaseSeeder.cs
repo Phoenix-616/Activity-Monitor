@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ActivityMonitor.Database;
 using ActivityMonitor.Database.Models;
 using ActivityMonitor.Database.Models.Git.ActivityMonitor.Database.Models;
-using ActivityMonitor.GitHubInteraction;
+using  ActivityMonitor.GitHubInteraction;
+using static ActivityMonitor.GitHubInteraction.Crawler;
 
 namespace ActivityMonitor
 {
@@ -30,11 +30,11 @@ namespace ActivityMonitor
                 var name = repo.Name;
                 var datas = await crawler.Get(owner, name);
 
-                await ReposSeed(datas.repositories);
-                await DevsSeed(datas.developers);
-                await RepDevsSeed(datas.developerRepositories);
-                //await FilesSeed(datas.files);
-                //await CommitsSeed(datas.commits);
+                //await ReposSeed(datas.repositories);
+                //await DevsSeed(datas.developers);
+                //await RepDevsSeed(datas.developerRepositories);
+                await FilesSeed(datas.files);
+                await CommitsSeed(datas.commits);
                 //await CommitFilesSeed(datas.commitFiles);
             }
         }
@@ -51,29 +51,45 @@ namespace ActivityMonitor
             await context.SaveChangesAsync();
         }
 
-        private async Task CommitsSeed(List<Commit> commits)
+        private async Task CommitsSeed(List<CommitInfo> commits)
         {
             foreach (var comm in commits)
             {
-                if (!context.Commits.Any(x => x.Id == comm.Id && x.GitId == comm.GitId))
+                var reposByName = context.Repositories.Where(x => x.Name == comm.RepositoryName).ToArray();
+                var devsByEmail = context.Developers.Where(x => x.Email == comm.AuthorEmail).ToArray();
+                var repId = reposByName[0].Id;
+                var devId = devsByEmail[0].Id;
+                
+                if (!context.Commits.Any(x => x.Id == comm.Id || x.GitId == comm.GitId))
                 {
-                    await context.Commits.AddAsync(comm);
+                    await context.Commits.AddAsync(new Commit 
+                    { 
+                        Id = comm.Id,
+                        GitId = comm.GitId,
+                        AuthorId = devId,
+                        RepositoryId = repId,
+                        CreatedAt = comm.CreatedAt,
+                        Created = comm.Created,
+                        Deleted = comm.Deleted
+                    });
                 }
             }
             await context.SaveChangesAsync();
         }
 
-        private async Task FilesSeed(List<File> files)
+        private async Task FilesSeed(List<FileInfo> files)
         {
             foreach (var file in files)
             {
-                if (!context.Files.Any(x => x.Id == file.Id || 
-                (file.Name == x.Name && 
-                context.Repositories.Where(z => z.Id == file.Id).ToArray()[0].Name == 
-                context.Repositories.Where(y => y.Id == x.RepositoryId).ToArray()[0].Name)
-                ))
+                var repsByNameFromContext = context.Repositories.Where(x => x.Name == file.RepName).ToArray();
+                var repOfFileFromContetx = repsByNameFromContext.Length == 0 ? null : repsByNameFromContext[0];
+                var repIdOfFile = repOfFileFromContetx == null ? file.RepId : repOfFileFromContetx.Id;   
+                if(!context.Files.Any(x => x.Id == file.Id || (x.Name == file.Name && x.RepositoryId == repIdOfFile)))
                 {
-                    await context.Files.AddAsync(file);
+                    await context.Files.AddAsync(new File 
+                    {
+                        Id = file.Id, Name = file.Name, RepositoryId = repIdOfFile
+                    });
                 }
             }
             await context.SaveChangesAsync();

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Membership = ActivityMonitor.Database.Models.Membership;
 using Issue = ActivityMonitor.Database.Models.Issue;
 using Task = ActivityMonitor.PMT.Task;
+using System.Linq;
 
 namespace ActivityMonitor
 {
@@ -38,7 +39,7 @@ namespace ActivityMonitor
                 }
 
             }
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
         private async Task<List<Project>> FillProjects()
@@ -58,8 +59,10 @@ namespace ActivityMonitor
                     Created_on = projects[i].created_on,
                     Updated_on = projects[i].updated_on
                 };
-
-                context.Projects.Add(one);
+                if (!context.Projects.Any(x => x.Id == one.Id))
+                {
+                    context.Projects.Add(one);
+                }
                 save.Add(one);
             }
             return save;
@@ -82,13 +85,20 @@ namespace ActivityMonitor
                     ProjectId = projId,
                     MembershipId = memberships[i].user.id
                 };
-
+                /*
                 var f = await context.Memberships.FindAsync(one);
                  
                 if (f == null)
+                */
+                if (!context.Memberships.Any(x => x.Id == one.Id))
+                {
                     context.Memberships.Add(one);
-
-                context.ProjectMemberships.Add(pm);
+                }
+                if (!context.ProjectMemberships.Any(x => x.MembershipId == pm.MembershipId &&
+                x.ProjectId == pm.ProjectId))
+                {
+                    context.ProjectMemberships.Add(pm);
+                }
             }
         }
 
@@ -121,8 +131,10 @@ namespace ActivityMonitor
                         ProjectId = projId,
                         MembershipId = issues[i].assigned_to.id
                     };
-
-                    context.Issues.Add(one);
+                    if (!context.Issues.Any(x => x.Id == one.Id))
+                    {
+                        context.Issues.Add(one);
+                    }
                     save.Add(one);
                 }
 
@@ -158,7 +170,10 @@ namespace ActivityMonitor
                         NewValue = history[i].details[0].new_value,
                         IssueId = issue.Id
                     };
-                    context.Journals.Add(one);
+                    if (!context.Journals.Any(x => x.Id == one.Id))
+                    {
+                        context.Journals.Add(one);
+                    }
                 }
             }
             

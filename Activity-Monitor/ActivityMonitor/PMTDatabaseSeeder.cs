@@ -61,7 +61,7 @@ namespace ActivityMonitor
                 };
                 if (!context.Projects.Any(x => x.Id == one.Id))
                 {
-                    context.Projects.Add(one);
+                    await context.Projects.AddAsync(one);
                 }
                 save.Add(one);
             }
@@ -92,12 +92,12 @@ namespace ActivityMonitor
                 */
                 if (!context.Memberships.Any(x => x.Id == one.Id))
                 {
-                    context.Memberships.Add(one);
+                    await context.Memberships.AddAsync(one);
                 }
                 if (!context.ProjectMemberships.Any(x => x.MembershipId == pm.MembershipId &&
                 x.ProjectId == pm.ProjectId))
                 {
-                    context.ProjectMemberships.Add(pm);
+                    await context.ProjectMemberships.AddAsync(pm);
                 }
             }
         }
@@ -133,7 +133,7 @@ namespace ActivityMonitor
                     };
                     if (!context.Issues.Any(x => x.Id == one.Id))
                     {
-                        context.Issues.Add(one);
+                        await context.Issues.AddAsync(one);
                     }
                     save.Add(one);
                 }
@@ -172,7 +172,7 @@ namespace ActivityMonitor
                     };
                     if (!context.Journals.Any(x => x.Id == one.Id))
                     {
-                        context.Journals.Add(one);
+                        await context.Journals.AddAsync(one);
                     }
                 }
             }

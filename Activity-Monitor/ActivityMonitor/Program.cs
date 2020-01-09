@@ -12,7 +12,7 @@ namespace ActivityMonitor
     class Program
     {
         static async Task Main(string[] args)
-        {
+        {            
             if (args == null)
             {
                 throw new ArgumentNullException(nameof(args));
@@ -33,8 +33,13 @@ namespace ActivityMonitor
                     );
 
                 await seeder.Seed();
-            }
 
+                var gitSeeder = new GitDatabaseSeeder(context,
+                                                      config.GitLogin,
+                                                      config.GitPassword,
+                                                      config.GitRepositories);
+                await gitSeeder.Seed();
+            }
         }
     }
 }

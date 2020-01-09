@@ -11,14 +11,6 @@
 	"GitRepositories":
 	[
 	{
-	"name":"tcm",
-	"owner":"ogresed"
-	},
-	{
-	"name":"spending",
-	"owner":"ogresed"
-	},
-	{
 	"name":"Activity-Monitor",
 	"owner":"Phoenix-616"
 	}

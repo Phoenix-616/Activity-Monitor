@@ -67,7 +67,11 @@ namespace ActivityMonitor
         {
             foreach (var file in files)
             {
-                if (!context.Files.Any(x => x.Id == file.Id))
+                if (!context.Files.Any(x => x.Id == file.Id || 
+                (file.Name == x.Name && 
+                context.Repositories.Where(z => z.Id == file.Id).ToArray()[0].Name == 
+                context.Repositories.Where(y => y.Id == x.RepositoryId).ToArray()[0].Name)
+                ))
                 {
                     await context.Files.AddAsync(file);
                 }
@@ -79,10 +83,20 @@ namespace ActivityMonitor
         {
             foreach (var devRep in developerRepositories)
             {
-                if (!context.DeveloperRepositories.Any(x => x.Developer.Email == devRep.Developer.Email &&
-                x.Repository.Name == devRep.Repository.Name))
+                var repName = devRep.Repository.Name;
+                var devEmail = devRep.Developer.Email;
+                var repsByName = context.Repositories.Where(x => x.Name == repName).ToArray();
+                var devsByEmail = context.Developers.Where(x => x.Email == devEmail).ToArray();
+                var repIdToAdd = repsByName.Length == 0 ? devRep.RepositoryId : repsByName[0].Id;
+                var devIdToAdd = devsByEmail.Length == 0 ? devRep.DeveloperId : devsByEmail[0].Id;
+
+                if (!context.DeveloperRepositories.Any(x => x.DeveloperId == devIdToAdd &&
+                x.RepositoryId == repIdToAdd))
                 {
-                    await context.DeveloperRepositories.AddAsync(devRep);
+                    await context.DeveloperRepositories.AddAsync(new DeveloperRepository 
+                    {
+                        DeveloperId = devIdToAdd, RepositoryId = repIdToAdd
+                    });
                 }
             }
             await context.SaveChangesAsync();

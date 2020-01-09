@@ -30,22 +30,31 @@ namespace ActivityMonitor
                 var name = repo.Name;
                 var datas = await crawler.Get(owner, name);
 
-                //await ReposSeed(datas.repositories);
-                //await DevsSeed(datas.developers);
-                //await RepDevsSeed(datas.developerRepositories);
+                await ReposSeed(datas.repositories);
+                await DevsSeed(datas.developers);
+                await RepDevsSeed(datas.developerRepositories);
                 await FilesSeed(datas.files);
                 await CommitsSeed(datas.commits);
-                //await CommitFilesSeed(datas.commitFiles);
+                await CommitFilesSeed(datas.commitFiles);
             }
         }
 
-        private async Task CommitFilesSeed(List<CommitFile> commitFiles)
+        private async Task CommitFilesSeed(List<CommitFileInfo> commitFiles)
         {
             foreach (var commFil in commitFiles)
             {
-                if (!context.CommitFiles.Any(x => x.FileId == commFil.FileId && x.CommitId == commFil.FileId))
+                var commIdFromContext = context.Commits.Where(x => x.GitId == commFil.Commit.GitId)
+                    .ToArray()[0].Id;
+                var idOfFileRepos = context.Repositories.Where(x => x.Name == commFil.File.RepName).ToArray()[0].Id;
+                var fileIdFromContext = context.Files.Where(x => x.Name == commFil.File.Name &&
+                x.RepositoryId == idOfFileRepos).ToArray()[0].Id;
+                if (!context.CommitFiles.Any(x => x.FileId == fileIdFromContext && x.CommitId == commIdFromContext))
                 {
-                    await context.CommitFiles.AddAsync(commFil);
+                    await context.CommitFiles.AddAsync(new CommitFile 
+                    { 
+                        CommitId = commIdFromContext,
+                        FileId = fileIdFromContext
+                    });
                 }
             }
             await context.SaveChangesAsync();

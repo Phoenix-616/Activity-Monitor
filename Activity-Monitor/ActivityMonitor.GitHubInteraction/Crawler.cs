@@ -39,7 +39,7 @@ namespace ActivityMonitor.GitHubInteraction
             public List<DeveloperRepository> developerRepositories{ get; set; }
             public List<FileInfo> files { get; set; }
             public List<CommitInfo> commits{ get; set; }
-            public List<CommitFile> commitFiles{ get; set; }
+            public List<CommitFileInfo> commitFiles{ get; set; }
         }
 
         public async Task<Entities> Get(string owner, string name)
@@ -54,24 +54,36 @@ namespace ActivityMonitor.GitHubInteraction
                                                            entities.developers);
             entities.files = CreateFiles(datas);
             entities.commits = CreateCommit(datas);
-            entities.commitFiles = CreateCommitFiles(datas);
+            entities.commitFiles = CreateCommitFiles(datas, entities.files, entities.commits);
 
             return entities;
         }
-
-        private List<CommitFile> CreateCommitFiles(List<Data> datas)
+        public class CommitFileInfo
         {
-            var list = new List<CommitFile>();
+            public int CommitId { get; set; }
+            public int FileId { get; set; }
+            public  CommitInfo Commit { get; set; }
+            public FileInfo File { get; set; }
+        }
+        private List<CommitFileInfo> CreateCommitFiles(List<Data> datas,
+                                                   List<FileInfo> fileInfos,
+                                                   List<CommitInfo> commitInfos)
+        {
+            var list = new List<CommitFileInfo>();
             foreach(var data in datas)
             {
                 foreach(var file in data.NameAndSha)
                 {
                     if(!list.Any(x => x.CommitId == data.CommitID && x.FileId == file.Id))
                     {
-                        list.Add(new CommitFile
+                        list.Add(new CommitFileInfo
                         {
                             CommitId = data.CommitID,
-                            FileId = data.FileID
+                            FileId = data.FileID,
+                            Commit = commitInfos
+                            .Where(x => x.GitId == data.CommitSha).ToArray()[0],
+                            File = fileInfos
+                            .Where(x => x.Name == file.Name && x.RepName == data.RepositoryName).ToArray()[0]
                         });
                     }
                 }
@@ -121,7 +133,6 @@ namespace ActivityMonitor.GitHubInteraction
         private List<FileInfo> CreateFiles(List<Data> datas)
         {
             var list = new List<FileInfo>();
-            var delList = new List<string>();
             foreach(var data in datas)
             {
                 foreach(var file in data.NameAndSha)
@@ -131,17 +142,9 @@ namespace ActivityMonitor.GitHubInteraction
                     var RepName = data.RepositoryName;
                     if(!list.Any(x => x.Id == id || (x.Name == name && x.RepName == RepName)))
                     {
-                        if ("removed".Equals(file.Status))
-                        {
-                            delList.Add(name);
-                        }
                         list.Add(new FileInfo { Id = id, Name = name, RepId = data.RepID, RepName = RepName });
                     }
                 }
-            }
-            foreach(var delName in delList)
-            {
-                list.RemoveAll(x => x.Name == delName);
             }
             return list;
         }
@@ -196,7 +199,6 @@ namespace ActivityMonitor.GitHubInteraction
 
         public class NameAndSha
         {
-            public string Status { get; set; }
             public string Name { get; set; }
             public int Id { get; set; }
         }
@@ -217,7 +219,6 @@ namespace ActivityMonitor.GitHubInteraction
             var nameAndSha = currentCommit.Files
             .Select(x => new NameAndSha 
             {
-                Status = x.Status,
                 Name = x.Filename, 
                 Id = GetIntIdByString(x.Sha)
             });
